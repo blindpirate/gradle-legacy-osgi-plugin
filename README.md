@@ -1,12 +1,13 @@
-## A replacement for Gradle 5 osgi plugin
+## A replacement for deprecated Gradle 5 osgi plugin
 
-Since Gradle 6, `osgi` plugin was removed from Gradle core plugins, but some builds still depend on this plugin.
+`osgi` plugin has been removed from Gradle core plugins since Gradle 6, yet some builds still depend on it.
 
 This repo extracts the legacy `osgi` plugin (and unit test) from Gradle 5.6.4 source code.
+
+If you're still using the deprecated `osgi` Gradle plugin in Gradle 6, you can use this plugin (`com.github.blindpirate.osgi`) as an option.
 
 ## How to use
 
 Just replace the original `apply plugin: 'osgi'` with `apply plugin: 'com.github.blindpirate.osgi'`.
 
 See [it on Gradle plugin portal](https://plugins.gradle.org/plugin/com.github.blindpirate.osgi). 
-
