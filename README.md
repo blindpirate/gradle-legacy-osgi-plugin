@@ -4,7 +4,7 @@
 
 This repo extracts the legacy `osgi` plugin (and unit test) from Gradle 5.6.4 source code.
 
-If you're still using the deprecated `OSGI` Gradle plugin ('osgi'), you need to migrate to using ('com.github.blindpirate.osgi').
+If you're still using the deprecated `osgi` Gradle plugin in Gradle 6, you can use this plugin (`com.github.blindpirate.osgi`) as an option.
 
 ## How to use
 
