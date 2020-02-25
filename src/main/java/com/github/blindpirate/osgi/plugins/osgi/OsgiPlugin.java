@@ -38,12 +38,7 @@ public class OsgiPlugin implements Plugin<Project> {
     public void apply(final Project project) {
         project.getPluginManager().apply(JavaBasePlugin.class);
 
-        final OsgiPluginConvention osgiConvention = DeprecationLogger.whileDisabled(new Factory<OsgiPluginConvention>() {
-            @Override
-            public OsgiPluginConvention create() {
-                return new OsgiPluginConvention((ProjectInternal) project);
-            }
-        });
+        final OsgiPluginConvention osgiConvention = new OsgiPluginConvention((ProjectInternal) project);
         project.getConvention().getPlugins().put("osgi", osgiConvention);
 
         project.getPlugins().withType(JavaPlugin.class, new Action<JavaPlugin>() {
