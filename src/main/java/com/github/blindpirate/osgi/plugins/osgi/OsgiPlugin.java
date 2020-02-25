@@ -27,7 +27,6 @@ import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.internal.Factory;
 import org.gradle.util.DeprecationLogger;
-import org.gradle.util.SingleMessageLogger;
 
 import java.io.File;
 
@@ -39,7 +38,6 @@ public class OsgiPlugin implements Plugin<Project> {
     public void apply(final Project project) {
         project.getPluginManager().apply(JavaBasePlugin.class);
 
-        SingleMessageLogger.nagUserOfPluginReplacedWithExternalOne("osgi", "biz.aQute.bnd");
         final OsgiPluginConvention osgiConvention = DeprecationLogger.whileDisabled(new Factory<OsgiPluginConvention>() {
             @Override
             public OsgiPluginConvention create() {
