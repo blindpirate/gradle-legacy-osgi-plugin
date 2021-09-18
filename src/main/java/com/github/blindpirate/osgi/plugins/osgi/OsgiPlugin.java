@@ -55,7 +55,7 @@ public class OsgiPlugin implements Plugin<Project> {
                 jarTask.dependsOn(prepareOsgiClasses);
                 OsgiManifest osgiManifest = osgiConvention.osgiManifest();
                 osgiManifest.setClassesDir(singleClassesDirectory);
-                osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeElements"));
+                osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeClasspath"));
 
                 jarTask.setManifest(osgiManifest);
             }
