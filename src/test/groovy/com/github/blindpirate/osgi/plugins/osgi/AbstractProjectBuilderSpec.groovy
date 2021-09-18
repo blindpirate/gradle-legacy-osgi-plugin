@@ -2,22 +2,19 @@ package com.github.blindpirate.osgi.plugins.osgi
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+import spock.lang.TempDir
 
 class AbstractProjectBuilderSpec extends Specification {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder()
+    @TempDir
+    File dir
 
     ProjectInternal project
 
     def setup() {
         project = ProjectBuilder
-                .builder()
-                .withProjectDir(temporaryFolder.newFolder())
-                .build()
+            .builder()
+            .withProjectDir(dir)
+            .build()
     }
-
-
 }

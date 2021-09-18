@@ -25,8 +25,6 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.bundling.Jar;
-import org.gradle.internal.Factory;
-import org.gradle.util.DeprecationLogger;
 
 import java.io.File;
 
@@ -57,7 +55,7 @@ public class OsgiPlugin implements Plugin<Project> {
                 jarTask.dependsOn(prepareOsgiClasses);
                 OsgiManifest osgiManifest = osgiConvention.osgiManifest();
                 osgiManifest.setClassesDir(singleClassesDirectory);
-                osgiManifest.setClasspath(project.getConfigurations().getByName("runtime"));
+                osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeElements"));
 
                 jarTask.setManifest(osgiManifest);
             }
