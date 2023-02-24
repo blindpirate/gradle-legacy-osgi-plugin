@@ -26,6 +26,7 @@ import org.gradle.api.plugins.BasePluginExtension;
 import org.gradle.internal.Actions;
 import org.gradle.internal.reflect.Instantiator;
 
+import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
 import static org.gradle.util.ConfigureUtil.configure;
@@ -33,15 +34,16 @@ import static org.gradle.util.ConfigureUtil.configure;
 /**
  * Is mixed into the project when applying the {@link OsgiPlugin}.
  */
-public class OsgiPluginConvention {
+public class OsgiExtension {
     private final ProjectInternal project;
 
     /**
-     * Creates an {@link OsgiPluginConvention} instance.
+     * Creates an {@link OsgiExtension} instance.
      *
      * @param project the project instance
      */
-    public OsgiPluginConvention(ProjectInternal project) {
+    @Inject
+    public OsgiExtension(ProjectInternal project) {
         this.project = project;
     }
 

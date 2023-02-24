@@ -36,8 +36,7 @@ public class OsgiPlugin implements Plugin<Project> {
     public void apply(final Project project) {
         project.getPluginManager().apply(JavaBasePlugin.class);
 
-        final OsgiPluginConvention osgiConvention = new OsgiPluginConvention((ProjectInternal) project);
-        project.getConvention().getPlugins().put("osgi", osgiConvention);
+        final OsgiExtension extension = project.getExtensions().create("osgi", OsgiExtension.class, project);
 
         project.getPlugins().withType(JavaPlugin.class, new Action<JavaPlugin>() {
             @Override
@@ -53,7 +52,7 @@ public class OsgiPlugin implements Plugin<Project> {
 
                 Jar jarTask = (Jar) project.getTasks().getByName("jar");
                 jarTask.dependsOn(prepareOsgiClasses);
-                OsgiManifest osgiManifest = osgiConvention.osgiManifest();
+                OsgiManifest osgiManifest = extension.osgiManifest();
                 osgiManifest.setClassesDir(singleClassesDirectory);
                 osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeClasspath"));
 

@@ -21,24 +21,24 @@ import org.gradle.api.Action
 import org.gradle.api.plugins.JavaBasePlugin
 import spock.lang.Issue
 
-class OsgiPluginConventionTest extends AbstractProjectBuilderSpec {
+class OsgiExtensionTest extends AbstractProjectBuilderSpec {
 
-    OsgiPluginConvention osgiPluginConvention
+    OsgiExtension extension
 
     def setup() {
-        osgiPluginConvention = new OsgiPluginConvention(project)
+        extension = new OsgiExtension(project)
         project.pluginManager.apply(JavaBasePlugin)
     }
 
     def osgiManifestWithNoClosure() {
-        OsgiManifest osgiManifest = osgiPluginConvention.osgiManifest()
+        OsgiManifest osgiManifest = extension.osgiManifest()
 
         expect:
         matchesExpectedConfig(osgiManifest)
     }
 
     def osgiManifestWithClosure() {
-        OsgiManifest osgiManifest = osgiPluginConvention.osgiManifest {
+        OsgiManifest osgiManifest = extension.osgiManifest {
             description = 'myDescription'
         }
 
@@ -48,7 +48,7 @@ class OsgiPluginConventionTest extends AbstractProjectBuilderSpec {
     }
 
     def osgiManifestWithAction() {
-        OsgiManifest osgiManifest = osgiPluginConvention.osgiManifest({ OsgiManifest manifest ->
+        OsgiManifest osgiManifest = extension.osgiManifest({ OsgiManifest manifest ->
             manifest.description = 'myDescription'
         } as Action<OsgiManifest>)
 
@@ -64,7 +64,7 @@ class OsgiPluginConventionTest extends AbstractProjectBuilderSpec {
                 "2.1"
             }
         }
-        def manifest = osgiPluginConvention.osgiManifest()
+        def manifest = extension.osgiManifest()
 
         expect:
         manifest.version == "2.1"
@@ -72,7 +72,7 @@ class OsgiPluginConventionTest extends AbstractProjectBuilderSpec {
 
     @Issue("GRADLE-1670")
     def "computes its defaults lazily"() {
-        def manifest = osgiPluginConvention.osgiManifest()
+        def manifest = extension.osgiManifest()
         def i = 0
         project.version = "${-> ++i}"
         project.group = "my.group"
