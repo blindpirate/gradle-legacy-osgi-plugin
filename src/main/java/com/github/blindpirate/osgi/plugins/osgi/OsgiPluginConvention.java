@@ -22,7 +22,7 @@ import org.gradle.api.Action;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.plugins.BasePluginConvention;
+import org.gradle.api.plugins.BasePluginExtension;
 import org.gradle.internal.Actions;
 import org.gradle.internal.reflect.Instantiator;
 
@@ -108,7 +108,7 @@ public class OsgiPluginConvention {
         mapping.map("name", new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                return project.getConvention().getPlugin(BasePluginConvention.class).getArchivesBaseName();
+                return project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get();
             }
         });
         mapping.map("symbolicName", new Callable<Object>() {

@@ -17,7 +17,7 @@ package com.github.blindpirate.osgi.internal.plugins.osgi;
 
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.BasePluginConvention;
+import org.gradle.api.plugins.BasePluginExtension;
 
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -59,7 +59,7 @@ public class OsgiHelper {
      */
     public String getBundleSymbolicName(Project project) {
         String group = project.getGroup().toString();
-        String archiveBaseName = project.getConvention().getPlugin(BasePluginConvention.class).getArchivesBaseName();
+        String archiveBaseName = project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get();
         if (archiveBaseName.startsWith(group)) {
             return archiveBaseName;
         }
