@@ -16,7 +16,7 @@ targetCompatibility = '1.8'
 dependencies {
     api gradleApi()
     api localGroovy()
-    api 'biz.aQute.bnd:biz.aQute.bndlib:5.2.0'
+    api 'biz.aQute.bnd:biz.aQute.bndlib:6.4.0'
 
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation 'net.bytebuddy:byte-buddy:1.10.6'
