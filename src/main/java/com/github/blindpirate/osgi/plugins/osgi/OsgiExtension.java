@@ -29,8 +29,6 @@ import org.gradle.internal.reflect.Instantiator;
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
-import static org.gradle.util.ConfigureUtil.configure;
-
 /**
  * Is mixed into the project when applying the {@link OsgiPlugin}.
  */
@@ -80,7 +78,9 @@ public class OsgiExtension {
      * @return the created OsgiManifest instance
      */
     public OsgiManifest osgiManifest(Closure closure) {
-        return configure(closure, createDefaultOsgiManifest());
+        OsgiManifest manifest = createDefaultOsgiManifest();
+        project.configure(manifest, closure);
+        return manifest;
     }
 
     /**
