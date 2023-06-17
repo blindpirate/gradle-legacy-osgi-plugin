@@ -25,7 +25,7 @@ class OsgiPluginTest extends AbstractProjectBuilderSpec {
 
         expect:
         project.plugins.hasPlugin('java-base')
-        project.convention.plugins.osgi instanceof OsgiPluginConvention
+        project.extensions.getByName('osgi') instanceof OsgiExtension
     }
 
     void addsAnOsgiManifestToTheDefaultJar() {

@@ -8,6 +8,6 @@ If you're still using the deprecated `osgi` Gradle plugin in Gradle 6, you can u
 
 ## How to use
 
-Just replace the original `apply plugin: 'osgi'` with `apply plugin: 'com.github.blindpirate.osgi'`.
+[![Download](https://img.shields.io/gradle-plugin-portal/v/com.github.blindpirate.osgi)](https://plugins.gradle.org/plugin/com.github.blindpirate.osgi)
 
-See [it on Gradle plugin portal](https://plugins.gradle.org/plugin/com.github.blindpirate.osgi). 
+Just replace the original `apply plugin: 'osgi'` with `apply plugin: 'com.github.blindpirate.osgi'`.

@@ -22,26 +22,26 @@ import org.gradle.api.Action;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.internal.IConventionAware;
 import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.plugins.BasePluginConvention;
+import org.gradle.api.plugins.BasePluginExtension;
 import org.gradle.internal.Actions;
 import org.gradle.internal.reflect.Instantiator;
 
+import javax.inject.Inject;
 import java.util.concurrent.Callable;
-
-import static org.gradle.util.ConfigureUtil.configure;
 
 /**
  * Is mixed into the project when applying the {@link OsgiPlugin}.
  */
-public class OsgiPluginConvention {
+public class OsgiExtension {
     private final ProjectInternal project;
 
     /**
-     * Creates an {@link OsgiPluginConvention} instance.
+     * Creates an {@link OsgiExtension} instance.
      *
      * @param project the project instance
      */
-    public OsgiPluginConvention(ProjectInternal project) {
+    @Inject
+    public OsgiExtension(ProjectInternal project) {
         this.project = project;
     }
 
@@ -78,7 +78,9 @@ public class OsgiPluginConvention {
      * @return the created OsgiManifest instance
      */
     public OsgiManifest osgiManifest(Closure closure) {
-        return configure(closure, createDefaultOsgiManifest());
+        OsgiManifest manifest = createDefaultOsgiManifest();
+        project.configure(manifest, closure);
+        return manifest;
     }
 
     /**
@@ -108,7 +110,7 @@ public class OsgiPluginConvention {
         mapping.map("name", new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                return project.getConvention().getPlugin(BasePluginConvention.class).getArchivesBaseName();
+                return project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get();
             }
         });
         mapping.map("symbolicName", new Callable<Object>() {
