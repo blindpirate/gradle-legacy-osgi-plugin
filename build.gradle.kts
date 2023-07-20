@@ -21,6 +21,7 @@ dependencies {
     testImplementation("net.bytebuddy:byte-buddy:1.14.5")
     testImplementation(platform("org.junit:junit-bom:5.9.3"))
     testImplementation("org.junit.vintage:junit-vintage-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 gradlePlugin {
