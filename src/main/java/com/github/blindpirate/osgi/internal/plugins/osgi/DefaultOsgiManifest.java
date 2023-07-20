@@ -36,7 +36,7 @@ import java.util.jar.Manifest;
 public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest {
 
     // Because these properties can be convention mapped we need special handling in here.
-    // If you add another one of these “modelled” properties, you need to update:
+    // If you add another one of these "modelled" properties, you need to update:
     // - maybeAppendModelledInstruction()
     // - maybePrependModelledInstruction()
     // - maybeSetModelledInstruction()
