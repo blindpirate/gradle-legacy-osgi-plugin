@@ -23,15 +23,13 @@ import org.gradle.api.java.archives.Attributes;
 import org.gradle.api.java.archives.internal.DefaultManifest;
 import org.gradle.internal.Factory;
 import org.gradle.internal.UncheckedException;
-import org.gradle.util.CollectionUtils;
-import org.gradle.util.WrapUtil;
+import org.gradle.util.internal.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.Manifest;
 
-@SuppressWarnings("deprecation")
 public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest {
 
     // Because these properties can be convention mapped we need special handling in here.
@@ -70,7 +68,9 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
             Manifest osgiManifest = analyzer.calcManifest();
             java.util.jar.Attributes attributes = osgiManifest.getMainAttributes();
             for (Map.Entry<Object, Object> entry : attributes.entrySet()) {
-                effectiveManifest.attributes(WrapUtil.toMap(entry.getKey().toString(), (String) entry.getValue()));
+                final Map<String, String> newMap = new HashMap<>();
+                newMap.put(entry.getKey().toString(), (String) entry.getValue());
+                effectiveManifest.attributes(newMap);
             }
             effectiveManifest.attributes(this.getAttributes());
             for (Map.Entry<String, Attributes> ent : getSections().entrySet()) {
