@@ -117,7 +117,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
         }
         for (String instructionName : instructionNames) {
             String list = createPropertyStringFromList(instructionValue(instructionName));
-            if (list != null && list.length() > 0) {
+            if (list != null && !list.isEmpty()) {
                 analyzer.setProperty(instructionName, list);
             }
         }
@@ -305,7 +305,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
     }
 
     private List<String> createListFromPropertyString(String propertyString) {
-        return propertyString == null || propertyString.length() == 0 ? null : new LinkedList<>(Arrays.asList(propertyString.split(",")));
+        return propertyString == null || propertyString.isEmpty() ? null : new LinkedList<>(Arrays.asList(propertyString.split(",")));
     }
 
     private Map<String, List<String>> getModelledInstructions() {
