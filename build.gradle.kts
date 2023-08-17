@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id("groovy")
-    id("com.gradle.plugin-publish") version "1.2.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 group = "com.github.blindpirate"
