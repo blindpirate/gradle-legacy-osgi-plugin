@@ -18,7 +18,7 @@ dependencies {
     api("biz.aQute.bnd:biz.aQute.bndlib:6.4.1")
 
     testImplementation("org.spockframework:spock-core:2.3-groovy-3.0")
-    testImplementation("net.bytebuddy:byte-buddy:1.14.6")
+    testImplementation("net.bytebuddy:byte-buddy:1.14.7")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
