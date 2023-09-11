@@ -41,7 +41,7 @@ public class OsgiPlugin implements Plugin<Project> {
             // When creating the OSGi manifest, we must have a single view of all the classes included in the jar.
             Sync prepareOsgiClasses = project.getTasks().create("osgiClasses", Sync.class);
             FileCollection classes = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main").getOutput().getClassesDirs();
-            File singleClassesDirectory = new File(project.getBuildDir(), "osgi-classes");
+            File singleClassesDirectory = project.getLayout().getBuildDirectory().file("osgi-classes").get().getAsFile();
             prepareOsgiClasses.setDescription("Prepares a single classes directory required for OSGi analysis.");
             prepareOsgiClasses.from(classes);
             prepareOsgiClasses.into(singleClassesDirectory);
