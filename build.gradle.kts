@@ -8,8 +8,7 @@ group = "com.github.blindpirate"
 version = "0.0.7"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
 }
 
 dependencies {
@@ -39,12 +38,10 @@ gradlePlugin {
     }
 }
 
-tasks.named("publishPlugins") {
-    notCompatibleWithConfigurationCache("https://github.com/gradle/gradle/issues/21283")
-}
-
 tasks.publishPlugins {
-    dependsOn(tasks.test)
+    notCompatibleWithConfigurationCache("https://github.com/gradle/gradle/issues/21283")
+
+    dependsOn(tasks.check)
 }
 
 tasks.test {
