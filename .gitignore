@@ -1,6 +1,7 @@
-.idea/
-build/
-.gradle/
+.fleet
+.idea
+.vscode
+build
+.gradle
 *.iml
 *.ipr
-
