@@ -35,7 +35,7 @@ public interface OsgiManifest extends org.gradle.api.java.archives.Manifest {
     List<String> instructionValue(String instructionName);
 
     /**
-     * Adds arguments to an instruction. If the instruction does not exists, it is created. If it does exists, the
+     * Adds arguments to an instruction. If the instruction does not exist, it is created. If it does exist, the
      * arguments are appended to the existing arguments.
      *
      * @return this
@@ -47,7 +47,7 @@ public interface OsgiManifest extends org.gradle.api.java.archives.Manifest {
     OsgiManifest instruction(String name, String... values);
 
     /**
-     * Adds arguments to an instruction. If the instruction does not exists, it is created. If it does exists, the
+     * Adds arguments to an instruction. If the instruction does not exist, it is created. If it does exist, the
      * arguments are inserted before the existing arguments.
      *
      * @param name Name of the instruction.
@@ -59,7 +59,7 @@ public interface OsgiManifest extends org.gradle.api.java.archives.Manifest {
     OsgiManifest instructionFirst(String name, String... values);
 
     /**
-     * Sets the values for an instruction. If the instruction does not exists, it is created. If it does exists, the
+     * Sets the values for an instruction. If the instruction does not exist, it is created. If it does exist, the
      * values replace the existing values.
      *
      * @param name Name of the instruction.

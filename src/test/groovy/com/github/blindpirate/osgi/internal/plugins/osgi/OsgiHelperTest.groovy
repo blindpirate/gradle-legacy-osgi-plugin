@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.blindpirate.osgi.internal.plugins.osgi;
+package com.github.blindpirate.osgi.internal.plugins.osgi
 
 import spock.lang.Specification
 
-public class OsgiHelperTest extends Specification {
+class OsgiHelperTest extends Specification {
     def "convert to OSGi-compliant version"() {
         def helper = new OsgiHelper()
 

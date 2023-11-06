@@ -125,7 +125,7 @@ public class OsgiHelper {
         }
         String ver = groups[0] + "." + groups[1] + "." + groups[2];
         String result;
-        if (groups[3].length() > 0) {
+        if (!groups[3].isEmpty()) {
             result = ver + "." + groups[3];
         } else {
             result = ver;

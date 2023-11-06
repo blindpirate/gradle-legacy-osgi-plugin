@@ -21,22 +21,19 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.java.archives.Attributes;
 import org.gradle.api.java.archives.internal.DefaultManifest;
-import org.gradle.api.specs.Spec;
 import org.gradle.internal.Factory;
 import org.gradle.internal.UncheckedException;
-import org.gradle.util.CollectionUtils;
-import org.gradle.util.WrapUtil;
+import org.gradle.util.internal.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.jar.Manifest;
 
-@SuppressWarnings("deprecation")
 public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest {
 
     // Because these properties can be convention mapped we need special handling in here.
-    // If you add another one of these “modelled” properties, you need to update:
+    // If you add another one of these "modelled" properties, you need to update:
     // - maybeAppendModelledInstruction()
     // - maybePrependModelledInstruction()
     // - maybeSetModelledInstruction()
@@ -54,7 +51,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
 
     private Factory<ContainedVersionAnalyzer> analyzerFactory = new DefaultAnalyzerFactory();
 
-    private Map<String, List<String>> unmodelledInstructions = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> unmodelledInstructions = new HashMap<>();
 
     private FileCollection classpath;
 
@@ -71,7 +68,9 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
             Manifest osgiManifest = analyzer.calcManifest();
             java.util.jar.Attributes attributes = osgiManifest.getMainAttributes();
             for (Map.Entry<Object, Object> entry : attributes.entrySet()) {
-                effectiveManifest.attributes(WrapUtil.toMap(entry.getKey().toString(), (String) entry.getValue()));
+                final Map<String, String> newMap = new HashMap<>();
+                newMap.put(entry.getKey().toString(), (String) entry.getValue());
+                effectiveManifest.attributes(newMap);
             }
             effectiveManifest.attributes(this.getAttributes());
             for (Map.Entry<String, Attributes> ent : getSections().entrySet()) {
@@ -118,7 +117,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
         }
         for (String instructionName : instructionNames) {
             String list = createPropertyStringFromList(instructionValue(instructionName));
-            if (list != null && list.length() > 0) {
+            if (list != null && !list.isEmpty()) {
                 analyzer.setProperty(instructionName, list);
             }
         }
@@ -130,31 +129,30 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
 
     @Override
     public List<String> instructionValue(String instructionName) {
-        if (instructionName.equals(Analyzer.BUNDLE_SYMBOLICNAME)) {
-            return createListFromPropertyString(getSymbolicName());
-        } else if (instructionName.equals(Analyzer.BUNDLE_NAME)) {
-            return createListFromPropertyString(getName());
-        } else if (instructionName.equals(Analyzer.BUNDLE_VERSION)) {
-            return createListFromPropertyString(getVersion());
-        } else if (instructionName.equals(Analyzer.BUNDLE_DESCRIPTION)) {
-            return createListFromPropertyString(getDescription());
-        } else if (instructionName.equals(Analyzer.BUNDLE_LICENSE)) {
-            return createListFromPropertyString(getLicense());
-        } else if (instructionName.equals(Analyzer.BUNDLE_VENDOR)) {
-            return createListFromPropertyString(getVendor());
-        } else if (instructionName.equals(Analyzer.BUNDLE_DOCURL)) {
-            return createListFromPropertyString(getDocURL());
-        } else {
-            return unmodelledInstructions.get(instructionName);
+        switch (instructionName) {
+            case Analyzer.BUNDLE_SYMBOLICNAME:
+                return createListFromPropertyString(getSymbolicName());
+            case Analyzer.BUNDLE_NAME:
+                return createListFromPropertyString(getName());
+            case Analyzer.BUNDLE_VERSION:
+                return createListFromPropertyString(getVersion());
+            case Analyzer.BUNDLE_DESCRIPTION:
+                return createListFromPropertyString(getDescription());
+            case Analyzer.BUNDLE_LICENSE:
+                return createListFromPropertyString(getLicense());
+            case Analyzer.BUNDLE_VENDOR:
+                return createListFromPropertyString(getVendor());
+            case Analyzer.BUNDLE_DOCURL:
+                return createListFromPropertyString(getDocURL());
+            default:
+                return unmodelledInstructions.get(instructionName);
         }
     }
 
     @Override
     public OsgiManifest instruction(String name, String... values) {
         if (!maybeAppendModelledInstruction(name, values)) {
-            if (unmodelledInstructions.get(name) == null) {
-                unmodelledInstructions.put(name, new ArrayList<String>());
-            }
+            unmodelledInstructions.computeIfAbsent(name, k -> new ArrayList<>());
             unmodelledInstructions.get(name).addAll(Arrays.asList(values));
         }
 
@@ -172,38 +170,37 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
     }
 
     private boolean maybeAppendModelledInstruction(String name, String... values) {
-        if (name.equals(Analyzer.BUNDLE_SYMBOLICNAME)) {
-            setSymbolicName(appendValues(getSymbolicName(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_NAME)) {
-            setName(appendValues(getName(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VERSION)) {
-            setVersion(appendValues(getVersion(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DESCRIPTION)) {
-            setDescription(appendValues(getDescription(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_LICENSE)) {
-            setLicense(appendValues(getLicense(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VENDOR)) {
-            setVendor(appendValues(getVendor(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DOCURL)) {
-            setDocURL(appendValues(getDocURL(), values));
-            return true;
-        } else {
-            return false;
+        switch (name) {
+            case Analyzer.BUNDLE_SYMBOLICNAME:
+                setSymbolicName(appendValues(getSymbolicName(), values));
+                return true;
+            case Analyzer.BUNDLE_NAME:
+                setName(appendValues(getName(), values));
+                return true;
+            case Analyzer.BUNDLE_VERSION:
+                setVersion(appendValues(getVersion(), values));
+                return true;
+            case Analyzer.BUNDLE_DESCRIPTION:
+                setDescription(appendValues(getDescription(), values));
+                return true;
+            case Analyzer.BUNDLE_LICENSE:
+                setLicense(appendValues(getLicense(), values));
+                return true;
+            case Analyzer.BUNDLE_VENDOR:
+                setVendor(appendValues(getVendor(), values));
+                return true;
+            case Analyzer.BUNDLE_DOCURL:
+                setDocURL(appendValues(getDocURL(), values));
+                return true;
+            default:
+                return false;
         }
     }
 
     @Override
     public OsgiManifest instructionFirst(String name, String... values) {
         if (!maybePrependModelledInstruction(name, values)) {
-            if (unmodelledInstructions.get(name) == null) {
-                unmodelledInstructions.put(name, new ArrayList<String>());
-            }
+            unmodelledInstructions.computeIfAbsent(name, k -> new ArrayList<>());
             unmodelledInstructions.get(name).addAll(0, Arrays.asList(values));
         }
         return this;
@@ -220,29 +217,30 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
     }
 
     private boolean maybePrependModelledInstruction(String name, String... values) {
-        if (name.equals(Analyzer.BUNDLE_SYMBOLICNAME)) {
-            setSymbolicName(prependValues(getSymbolicName(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_NAME)) {
-            setName(prependValues(getName(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VERSION)) {
-            setVersion(prependValues(getVersion(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DESCRIPTION)) {
-            setDescription(prependValues(getDescription(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_LICENSE)) {
-            setLicense(prependValues(getLicense(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VENDOR)) {
-            setVendor(prependValues(getVendor(), values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DOCURL)) {
-            setDocURL(prependValues(getDocURL(), values));
-            return true;
-        } else {
-            return false;
+        switch (name) {
+            case Analyzer.BUNDLE_SYMBOLICNAME:
+                setSymbolicName(prependValues(getSymbolicName(), values));
+                return true;
+            case Analyzer.BUNDLE_NAME:
+                setName(prependValues(getName(), values));
+                return true;
+            case Analyzer.BUNDLE_VERSION:
+                setVersion(prependValues(getVersion(), values));
+                return true;
+            case Analyzer.BUNDLE_DESCRIPTION:
+                setDescription(prependValues(getDescription(), values));
+                return true;
+            case Analyzer.BUNDLE_LICENSE:
+                setLicense(prependValues(getLicense(), values));
+                return true;
+            case Analyzer.BUNDLE_VENDOR:
+                setVendor(prependValues(getVendor(), values));
+                return true;
+            case Analyzer.BUNDLE_DOCURL:
+                setDocURL(prependValues(getDocURL(), values));
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -252,9 +250,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
             if (values.length == 0 || (values.length == 1 && values[0] == null)) {
                 unmodelledInstructions.remove(name);
             } else {
-                if (unmodelledInstructions.get(name) == null) {
-                    unmodelledInstructions.put(name, new ArrayList<String>());
-                }
+                unmodelledInstructions.computeIfAbsent(name, k -> new ArrayList<>());
                 List<String> instructionsForName = unmodelledInstructions.get(name);
                 instructionsForName.clear();
                 Collections.addAll(instructionsForName, values);
@@ -265,35 +261,36 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
     }
 
     private boolean maybeSetModelledInstruction(String name, String... values) {
-        if (name.equals(Analyzer.BUNDLE_SYMBOLICNAME)) {
-            setSymbolicName(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_NAME)) {
-            setName(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VERSION)) {
-            setVersion(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DESCRIPTION)) {
-            setDescription(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_LICENSE)) {
-            setLicense(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_VENDOR)) {
-            setVendor(createPropertyStringFromArray(values));
-            return true;
-        } else if (name.equals(Analyzer.BUNDLE_DOCURL)) {
-            setDocURL(createPropertyStringFromArray(values));
-            return true;
-        } else {
-            return false;
+        switch (name) {
+            case Analyzer.BUNDLE_SYMBOLICNAME:
+                setSymbolicName(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_NAME:
+                setName(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_VERSION:
+                setVersion(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_DESCRIPTION:
+                setDescription(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_LICENSE:
+                setLicense(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_VENDOR:
+                setVendor(createPropertyStringFromArray(values));
+                return true;
+            case Analyzer.BUNDLE_DOCURL:
+                setDocURL(createPropertyStringFromArray(values));
+                return true;
+            default:
+                return false;
         }
     }
 
     @Override
     public Map<String, List<String>> getInstructions() {
-        Map<String, List<String>> instructions = new HashMap<String, List<String>>();
+        Map<String, List<String>> instructions = new HashMap<>();
         instructions.putAll(unmodelledInstructions);
         instructions.putAll(getModelledInstructions());
         return instructions;
@@ -308,11 +305,11 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
     }
 
     private List<String> createListFromPropertyString(String propertyString) {
-        return propertyString == null || propertyString.length() == 0 ? null : new LinkedList<String>(Arrays.asList(propertyString.split(",")));
+        return propertyString == null || propertyString.isEmpty() ? null : new LinkedList<>(Arrays.asList(propertyString.split(",")));
     }
 
     private Map<String, List<String>> getModelledInstructions() {
-        Map<String, List<String>> modelledInstructions = new HashMap<String, List<String>>();
+        Map<String, List<String>> modelledInstructions = new HashMap<>();
         modelledInstructions.put(Analyzer.BUNDLE_SYMBOLICNAME, createListFromPropertyString(symbolicName));
         modelledInstructions.put(Analyzer.BUNDLE_NAME, createListFromPropertyString(name));
         modelledInstructions.put(Analyzer.BUNDLE_VERSION, createListFromPropertyString(version));
@@ -321,12 +318,7 @@ public class DefaultOsgiManifest extends DefaultManifest implements OsgiManifest
         modelledInstructions.put(Analyzer.BUNDLE_VENDOR, createListFromPropertyString(vendor));
         modelledInstructions.put(Analyzer.BUNDLE_DOCURL, createListFromPropertyString(docURL));
 
-        return CollectionUtils.filter(modelledInstructions, new Spec<Map.Entry<String, List<String>>>() {
-            @Override
-            public boolean isSatisfiedBy(Map.Entry<String, List<String>> element) {
-                return element.getValue() != null;
-            }
-        });
+        return CollectionUtils.filter(modelledInstructions, element -> element.getValue() != null);
     }
 
     @Override

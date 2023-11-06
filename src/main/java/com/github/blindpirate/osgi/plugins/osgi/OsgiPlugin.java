@@ -15,11 +15,9 @@
  */
 package com.github.blindpirate.osgi.plugins.osgi;
 
-import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -38,26 +36,23 @@ public class OsgiPlugin implements Plugin<Project> {
 
         final OsgiExtension extension = project.getExtensions().create("osgi", OsgiExtension.class, project);
 
-        project.getPlugins().withType(JavaPlugin.class, new Action<JavaPlugin>() {
-            @Override
-            public void execute(JavaPlugin javaPlugin) {
+        project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
 
-                // When creating the OSGi manifest, we must have a single view of all of the classes included in the jar.
-                Sync prepareOsgiClasses = project.getTasks().create("osgiClasses", Sync.class);
-                FileCollection classes = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main").getOutput().getClassesDirs();
-                File singleClassesDirectory = new File(project.getBuildDir(), "osgi-classes");
-                prepareOsgiClasses.setDescription("Prepares a single classes directory required for OSGi analysis.");
-                prepareOsgiClasses.from(classes);
-                prepareOsgiClasses.into(singleClassesDirectory);
+            // When creating the OSGi manifest, we must have a single view of all the classes included in the jar.
+            Sync prepareOsgiClasses = project.getTasks().create("osgiClasses", Sync.class);
+            FileCollection classes = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main").getOutput().getClassesDirs();
+            File singleClassesDirectory = project.getLayout().getBuildDirectory().file("osgi-classes").get().getAsFile();
+            prepareOsgiClasses.setDescription("Prepares a single classes directory required for OSGi analysis.");
+            prepareOsgiClasses.from(classes);
+            prepareOsgiClasses.into(singleClassesDirectory);
 
-                Jar jarTask = (Jar) project.getTasks().getByName("jar");
-                jarTask.dependsOn(prepareOsgiClasses);
-                OsgiManifest osgiManifest = extension.osgiManifest();
-                osgiManifest.setClassesDir(singleClassesDirectory);
-                osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeClasspath"));
+            Jar jarTask = (Jar) project.getTasks().getByName("jar");
+            jarTask.dependsOn(prepareOsgiClasses);
+            OsgiManifest osgiManifest = extension.osgiManifest();
+            osgiManifest.setClassesDir(singleClassesDirectory);
+            osgiManifest.setClasspath(project.getConfigurations().getByName("runtimeClasspath"));
 
-                jarTask.setManifest(osgiManifest);
-            }
+            jarTask.setManifest(osgiManifest);
         });
     }
 }

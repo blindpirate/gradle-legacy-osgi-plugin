@@ -27,7 +27,6 @@ import org.gradle.internal.Actions;
 import org.gradle.internal.reflect.Instantiator;
 
 import javax.inject.Inject;
-import java.util.concurrent.Callable;
 
 /**
  * Is mixed into the project when applying the {@link OsgiPlugin}.
@@ -67,7 +66,7 @@ public class OsgiExtension {
      * @return the created OsgiManifest instance
      */
     public OsgiManifest osgiManifest() {
-        return osgiManifest(Actions.<OsgiManifest>doNothing());
+        return osgiManifest(Actions.doNothing());
     }
 
     /**
@@ -77,7 +76,7 @@ public class OsgiExtension {
      * @param closure the closure to configure the created OsgiManifest instance
      * @return the created OsgiManifest instance
      */
-    public OsgiManifest osgiManifest(Closure closure) {
+    public OsgiManifest osgiManifest(Closure<?> closure) {
         OsgiManifest manifest = createDefaultOsgiManifest();
         project.configure(manifest, closure);
         return manifest;
@@ -101,24 +100,9 @@ public class OsgiExtension {
         ConventionMapping mapping = ((IConventionAware) osgiManifest).getConventionMapping();
         final OsgiHelper osgiHelper = new OsgiHelper();
 
-        mapping.map("version", new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return osgiHelper.getVersion(project.getVersion().toString());
-            }
-        });
-        mapping.map("name", new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get();
-            }
-        });
-        mapping.map("symbolicName", new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return osgiHelper.getBundleSymbolicName(project);
-            }
-        });
+        mapping.map("version", () -> osgiHelper.getVersion(project.getVersion().toString()));
+        mapping.map("name", () -> project.getExtensions().getByType(BasePluginExtension.class).getArchivesName().get());
+        mapping.map("symbolicName", () -> osgiHelper.getBundleSymbolicName(project));
 
         return osgiManifest;
     }

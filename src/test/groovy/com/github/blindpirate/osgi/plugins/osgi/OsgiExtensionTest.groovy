@@ -94,7 +94,7 @@ class OsgiExtensionTest extends AbstractProjectBuilderSpec {
     }
 
     void matchesExpectedConfig(DefaultOsgiManifest osgiManifest) {
-        OsgiHelper osgiHelper = new OsgiHelper();
+        OsgiHelper osgiHelper = new OsgiHelper()
         assert osgiManifest.version == osgiHelper.getVersion((String) project.version)
         assert osgiManifest.name == project.archivesBaseName
         assert osgiManifest.symbolicName == osgiHelper.getBundleSymbolicName(project)
